@@ -137,32 +137,6 @@ section .title::after {
   font-weight: 600;
 }
 
-.navbar {
-  position: fixed;
-  width: 100%;
-  z-index: 999;
-  padding: 30px 0;
-  font-family: "Ubuntu", sans-serif;
-  transition: all 0.3s ease;
-}
-
-.navbar.sticky {
-  padding: 13px 0;
-  background: #01050a;
-}
-
-.navbar .max-width {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.navbar .logo a {
-  color: #fff;
-  font-size: 35px;
-  font-weight: 600;
-}
-
 /*  Nav Logo Span Linear-Gradient  */
 .navbar .logo a span {
   background: linear-gradient(135deg, #cf2816, #fff, rgb(44, 13, 218));
