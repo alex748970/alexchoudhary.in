@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Education History Timeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root{
+      --bg: #0b1020;        /* background */
+      --panel: #141a32;     /* card bg */
+      --text: #e7ecfb;      /* main text */
+      --muted: #a9b3d7;     /* secondary text */
+      --brand: #6c8cff;     /* primary accent */
+      --brand-2: #22d3ee;   /* secondary accent */
+      --ring: #90a6ff55;    /* focus ring */
+      --ok: #10b981;        /* success */
+      --warn: #f59e0b;      /* warning */
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --text: #111827;
+        --muted: #475569;
+        --brand: #3b82f6;
+        --brand-2: #06b6d4;
+        --ring: #3b82f633;
+      }
+      body{ background-image: radial-gradient(60vw 60vw at 10% -10%, #dbeafe 0, transparent 60%), radial-gradient(60vw 60vw at 110% 0%, #cffafe 0, transparent 60%); }
+    }
+
+    *{ box-sizing: border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(16px, 2vw, 32px);
+    }
+
+    /* Header */
+    header{
+      display: grid;
+      gap: 12px;
+      margin: 32px 0 18px;
+      align-items: center;
+    }
+    .title{
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      color: var(--muted);
+      font-size: clamp(14px, 1.8vw, 16px);
+      max-width: 70ch;
+    }
+
+    /* Timeline */
+    .timeline{
+      position: relative;
+      margin: 28px 0 60px;
+      padding-left: 26px; /* space for line on mobile */
+      list-style: none;
+    }
+    /* vertical line */
+    .timeline::before{
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--brand), var(--brand-2));
+      opacity: .35;
+    }
+
+    .entry{
+      position: relative;
+      margin: 22px 0 26px;
+      transition: transform .25s ease, filter .25s ease;
+      will-change: transform;
+    }
+
+    /* dot */
+    .entry::before{
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 22px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff8, #0000), linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 0 0 3px var(--ring), 0 6px 14px #0006;
+    }
+
+    .card{
+      background: linear-gradient(180deg, color-mix(in oklab, var(--panel), #ffffff 2%), var(--panel));
+      border: 1px solid color-mix(in oklab, var(--panel), #ffffff 12%);
+      border-radius: 16px;
+      padding: clamp(16px, 2.2vw, 22px);
+      box-shadow: 0 20px 40px #0006;
+      display: grid;
+      gap: 8px;
+    }
+
+    .row{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .badge{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--brand), #000 10%);
+      color: white;
+    }
+    .badge svg{ width: 14px; height: 14px; }
+
+    .degree{
+      font-size: clamp(18px, 2.6vw, 22px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .school{
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .meta{
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta .tag{
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--panel), #fff 6%);
+      border: 1px solid color-mix(in oklab, var(--panel), #fff 10%);
+    }
+
+    .desc{ margin-top: 6px; }
+
+    .entry:hover{ transform: translateY(-2px); }
+
+    /* Grid on large screens */
+    @media (min-width: 900px){
+      .timeline{ padding-left: 0; }
+      .timeline::before{ left: 50%; transform: translateX(-50%); }
+      .entry{ width: 50%; }
+      .entry:nth-child(odd){ padding-right: 36px; margin-left: 0; }
+      .entry:nth-child(even){ padding-left: 36px; margin-left: 50%; }
+      .entry::before{ left: calc(50% - 7px); }
+      .entry:nth-child(odd) .card{ margin-right: 24px; }
+      .entry:nth-child(even) .card{ margin-left: 24px; }
+    }
+
+    /* Footer */
+    footer{
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0 40px;
+      border-top: 1px dashed color-mix(in oklab, var(--muted), transparent 60%);
+    }
+
+    /* Utility */
+    .sr-only{ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .spacer{ height: 8px; }
+    a.btn{
+      display: inline-flex; align-items:center; gap:8px;
+      padding: 10px 14px; border-radius: 12px; font-weight:600; text-decoration:none;
+      border: 1px solid color-mix(in oklab, var(--brand), #000 10%);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--brand), #fff 8%), var(--brand));
+      color: white;
+      box-shadow: 0 10px 24px #0005, inset 0 1px 0 #ffffff55;
+    }
+    a.btn:hover{ filter: brightness(1.05) saturate(1.02); }
+    a.btn:focus{ outline: none; box-shadow: 0 0 0 6px var(--ring); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge" aria-hidden="true" title="Resume">
+        <!-- Diploma Cap Icon -->
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 8l10-5 10 5-10 5L2 8z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M4 10v5c0 1.1 3.6 3 8 3s8-1.9 8-3v-5" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        EDUCATION TIMELINE
+      </div>
+      <h1 class="title">Education History</h1>
+      <p class="subtitle">A clean, responsive timeline to showcase academic milestones. Copy, paste, and edit the entries below with your own degrees, schools, and achievements.</p>
+    </header>
+
+    <ol class="timeline" aria-label="Education timeline">
+ <!-- Entry 1 -->
+      <li class="entry">
+        <article class="card" aria-label="Diploma of Data Analysis ">
+          <div class="row">
+            <h2 class="degree">Data analysis in Data Science</h2>
+            <span class="school">\2025 Learning Lab Institute  Benglore Karnatak </span>
+          </div>
+          <div class="meta" aria-label="Details">
+            <span class="tag" title="Study period">2025</span>
+            <span class="tag" title="GPA">CGPA:Pursing</span>
+            <span class="tag" title="Location">Benglore ,</span>
+          </div>
+          <p class="desc">Thesis on <em>Time-Series Forecasting for Retail Demand</em>. Coursework included SQL,Power Bi Visualization advance Excel,Python,, and Statistical Inference. Data analysis Teaching Assistant for \"Intro to Data Insight Visulizaton \".</p>
+        </article>
+      </li>
+
+      <!-- Entry 1 -->
+      <li class="entry">
+        <article class="card" aria-label="Master of Computer Application (MCA) ">
+          <div class="row">
+            <h2 class="degree">MCA. in Data Science</h2>
+            <span class="school">\2025 Shri Ram Institute of Technology Jabalpur Madhya-Pradesh </span>
+          </div>
+          <div class="meta" aria-label="Details">
+            <span class="tag" title="Study period">2023-2025</span>
+            <span class="tag" title="GPA">CGPA: 8.02 /10</span>
+            <span class="tag" title="Location">Jabalpur , Madhya-Pradesh</span>
+          </div>
+          <p class="desc">Thesis on <em>Time-Series Forecasting for Retail Demand</em>. Coursework included Advanced Machine Learning, Big Data Systems, and Statistical Inference. Graduate Teaching Assistant for "Intro to Python".</p>
+        </article>
+      </li>
+
+      <!-- Entry 2 -->
+      <li class="entry">
+        <article class="card" aria-label="Bachelor of Computer application">
+          <div class="row">
+            <h2 class="degree">BCA in Computer Science</h2>
+            <span class="school">\2020 Tavite Computer & technology Institute katni </span>
+          </div>
+          <div class="meta">
+            <span class="tag">2020 - 2025</span>
+            <span class="tag">CGPA: 8.2/10</span>
+            <span class="tag">Makhanlal Chaturvedi University , Bhopal</span>
+          </div>
+          <p class="desc">Led the Coding Club and organized inter-college hackathons. Relevant projects: compiler design mini-project, social analytics dashboard, and a campus navigation app.</p>
+        </article>
+      </li>
+
+      <!-- Entry 3 -->
+      <li class="entry">
+        <article class="card" aria-label="Senior Secondary">
+          <div class="row">
+            <h2 class="degree">Senior Secondary (Class XII)</h2>
+            <span class="school">\2020 Govt.Higher Secondry School Pipariya Parouha </span>
+          </div>
+          <div class="meta">
+            <span class="tag">2020 </span>
+            <span class="tag">State Board: 60%</span>
+            <span class="tag">State Board Madhya-pradesh</span>
+          </div>
+          <p class="desc">Science stream with focus on Mathematics and Computer Science. Won inter-school math olympiad and represented school in National Science Exhibition.</p>
+        </article>
+      </li>
+
+      <!-- Entry 4 -->
+      <li class="entry">
+        <article class="card" aria-label="Secondary">
+          <div class="row">
+            <h2 class="degree">Secondary (Class X)</h2>
+            <span class="school">\2018 Govt.High school Raipura Katni </span>
+          </div>
+          <div class="meta">
+            <span class="tag">2018</span>
+            <span class="tag">CGPA: 83 % </span>
+            <span class="tag">Madhya - Pradesh, India</span>
+          </div>
+          <p class="desc">School prefect and captain of the debate team. Awarded \"Best All-Rounder\" for academics and extracurricular achievement.</p>
+        </article>
+      </li>
+    </ol>
+
+    <footer>
+      <small>Tip: Duplicate an <code>&lt;li class="entry"&gt;</code> block to add more items. Keep the most recent education at the top.</small>
+      <a class="btn" href="#" onclick="window.print();return false;" aria-label="Print this page">
+        <!-- Printer Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Print
+      </a>
+    </footer>
+  </div>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Education</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+    }
+
+    /* Banner */
+    .banner {
+      background: url('your-banner-image.jpg') center/cover no-repeat;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .banner h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #e63946, #ffafcc, #6a4c93);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    /* Steps Container */
+    .steps {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin: 40px 20px;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+      width: 220px;
+    }
+    .circle {
+      width: 70px;
+      height: 70px;
+      background: #2563eb;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      color: #2563eb;
+    }
+    .school {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+    .year {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .desc {
+      font-size: 0.9rem;
+      color: #374151;
+      line-height: 1.4;
+    }
+    .step::after {
+      content: "";
+      position: absolute;
+      top: 35px;
+      right: -40px;
+      width: 40px;
+      height: 3px;
+      background: #2563eb;
+    }
+    .step:last-child::after {
+      display: none;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #111827;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .steps { flex-direction: column; align-items: center; }
+      .step::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Banner -->
+  <div class="banner">
+    <marquee> <h1>Data Analysis Insight Visualization</h1></marquee>
+  </div>
+
+  <!-- Education Steps -->
+  <section class="steps">
+    <div class="step">
+      <div class="circle">1</div>
+      <div class="title">Data Analysis Data Science</div>
+      <div class="school">LLR Benglore Certification Course </div>
+      <div class="year"> 2025</div> 
+      <div class="desc">Specialized in Data Visualization , SQL , Pthon Advance Excel, thesis on Retail Forecasting.</div>
+    </div>
+    <div class="step">
+      <div class="circle">2</div>
+      <div class="title">MCA Computer Science</div>
+      <div class="school"> Shri Ram Institute Of Technology Jabalpur</div>
+      <div class="year">2023 2025</div>
+      <div class="desc">Graduated with honors. Active in coding clubs & hackathons.</div>
+    </div>
+    <div class="step">
+      <div class="circle">3</div>
+      <div class="title">BCA ( Computer Science)</div>
+      <div class="school">Tavite Computer & Software Institute Katni</div>
+      <div class="year">2020 – 2023</div>
+      <div class="desc">CBSE 82%. Math Olympiad winner & Science Exhibition participant.</div>
+    </div>
+    <
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 My Portfolio | Education Page
+  </footer>
+</body>
+</html>
+
+</body>
+</html>

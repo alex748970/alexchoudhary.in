@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form | Send Message Directly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-input.error {
+            border-color: #ef4444;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .contact-info {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .contact-info p {
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .contact-phone {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .whatsapp-integration {
+            background: #25D366;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .instruction-box {
+            background: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .instruction-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .instruction-list li {
+            padding: 8px 0;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        @media (max-width: 640px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                <i class="fab fa-whatsapp text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Direct WhatsApp Contact</h1>
+            <p class="text-gray-600">Fill the form and send message directly to my WhatsApp</p>
+        </div>
+        
+        <form id="contactForm">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-user mr-2"></i>Full Name *
+                </label>
+                <input type="text" class="form-input" id="name" name="name" placeholder="Enter your full name" required>
+                <div class="error-message" id="nameError">Please enter your name</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-phone mr-2"></i>Your Contact Number *
+                </label>
+                <input type="tel" class="form-input" id="contact" name="contact" placeholder="Enter your phone number" required>
+                <div class="error-message" id="contactError">Please enter a valid phone number</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-building mr-2"></i>Company Name
+                </label>
+                <input type="text" class="form-input" id="company" name="company" placeholder="Enter your company name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-envelope mr-2"></i>Email Address *
+                </label>
+                <input type="email" class="form-input" id="email" name="email" placeholder="Enter your email address" required>
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-comment mr-2"></i>Message *
+                </label>
+                <textarea class="form-input" id="message" name="message" rows="4" placeholder="Type your message here..." required></textarea>
+                <div class="error-message" id="messageError">Please enter your message (min. 10 characters)</div>
+            </div>
+            
+            <div class="whatsapp-integration">
+                <i class="fab fa-whatsapp text-xl mr-2"></i>
+                <span>Message will be sent directly to WhatsApp</span>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fab fa-whatsapp"></i>
+                <span>Send via WhatsApp</span>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </button>
+        </form>
+        
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle mr-2"></i>
+            Message ready to send! Opening WhatsApp...
+        </div>
+        
+        <div class="instruction-box">
+            <div class="instruction-title">
+                <i class="fas fa-info-circle"></i>
+                How it works:
+            </div>
+            <ul class="instruction-list">
+                <li><i class="fas fa-check-circle text-green-500"></i>Fill out the form above</li>
+                <li><i class="fas fa-check-circle text-green-500"></i>Click "Send via WhatsApp"</li>
+                <li><i class="fas fa-check-circle text-green-500"></i>WhatsApp will open automatically</li>
+                <li><i class="fas fa-check-circle text-green-500"></i>Just press send to deliver your message</li>
+            </ul>
+        </div>
+        
+        <div class="contact-info">
+            <p>My Contact Number:</p>
+            <a href="tel:7489709954" class="contact-phone">
+                <i class="fas fa-phone"></i>
+                +91 74897 09954
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Your contact number
+            const YOUR_CONTACT_NUMBER = '7489709954';
+            const COUNTRY_CODE = '91'; // India
+            
+            // Form validation
+            function validateField(field, errorElement, validationFn) {
+                const value = field.value.trim();
+                const isValid = validationFn(value);
+                
+                if (!isValid) {
+                    field.classList.add('error');
+                    errorElement.style.display = 'block';
+                    return false;
+                } else {
+                    field.classList.remove('error');
+                    errorElement.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            function validateName(name) {
+                return name.length >= 2;
+            }
+            
+            function validateContact(contact) {
+                return /^[\+]?[1-9][\d]{0,15}$/.test(contact.replace(/\D/g, ''));
+            }
+            
+            function validateEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+            
+            function validateMessage(message) {
+                return message.length >= 10;
+            }
+            
+            // Real-time validation
+            document.getElementById('name').addEventListener('input', function() {
+                validateField(this, document.getElementById('nameError'), validateName);
+            });
+            
+            document.getElementById('contact').addEventListener('input', function() {
+                validateField(this, document.getElementById('contactError'), validateContact);
+            });
+            
+            document.getElementById('email').addEventListener('input', function() {
+                validateField(this, document.getElementById('emailError'), validateEmail);
+            });
+            
+            document.getElementById('message').addEventListener('input', function() {
+                validateField(this, document.getElementById('messageError'), validateMessage);
+            });
+            
+            // Format WhatsApp message
+            function formatWhatsAppMessage(formData) {
+                return `*New Contact Form Message*
+
+*Name:* ${formData.name}
+*Contact:* ${formData.contact}
+*Company:* ${formData.company || 'Not provided'}
+*Email:* ${formData.email}
+
+*Message:*
+${formData.message}
+
+*Timestamp:* ${new Date().toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    dateStyle: 'full',
+                    timeStyle: 'medium'
+                })}`;
+            }
+            
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                const isNameValid = validateField(
+                    document.getElementById('name'),
+                    document.getElementById('nameError'),
+                    validateName
+                );
+                
+                const isContactValid = validateField(
+                    document.getElementById('contact'),
+                    document.getElementById('contactError'),
+                    validateContact
+                );
+                
+                const isEmailValid = validateField(
+                    document.getElementById('email'),
+                    document.getElementById('emailError'),
+                    validateEmail
+                );
+                
+                const isMessageValid = validateField(
+                    document.getElementById('message'),
+                    document.getElementById('messageError'),
+                    validateMessage
+                );
+                
+                if (!isNameValid || !isContactValid || !isEmailValid || !isMessageValid) {
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                loadingSpinner.style.display = 'block';
+                submitBtn.querySelector('span').textContent = 'Preparing...';
+                
+                // Get form data
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    contact: document.getElementById('contact').value.trim(),
+                    company: document.getElementById('company').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    message: document.getElementById('message').value.trim()
+                };
+                
+                // Format WhatsApp message
+                const whatsappMessage = formatWhatsAppMessage(formData);
+                
+                // Encode message for URL
+                const encodedMessage = encodeURIComponent(whatsappMessage);
+                
+                // Create WhatsApp URL
+                const whatsappURL = `https://wa.me/${COUNTRY_CODE}${YOUR_CONTACT_NUMBER}?text=${encodedMessage}`;
+                
+                // Show success message briefly
+                successMessage.style.display = 'block';
+                
+                // Wait a moment for user to see the success message
+                setTimeout(() => {
+                    // Open WhatsApp in new tab
+                    window.open(whatsappURL, '_blank');
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Hide success message
+                    successMessage.style.display = 'none';
+                    
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    submitBtn.querySelector('span').textContent = 'Send via WhatsApp';
+                }, 1500);
+            });
+            
+            // Format phone number input
+            document.getElementById('contact').addEventListener('input', function(e) {
+                let input = e.target.value.replace(/\D/g, '').substring(0, 15);
+                
+                if (input.length > 0) {
+                    input = input.match(new RegExp('.{1,4}', 'g')).join(' ');
+                }
+                
+                e.target.value = input;
+            });
+            
+            // Add click-to-call functionality
+            const phoneLink = document.querySelector('.contact-phone');
+            phoneLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Would you like to call this number?')) {
+                    window.location.href = 'tel:' + YOUR_CONTACT_NUMBER;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+```
